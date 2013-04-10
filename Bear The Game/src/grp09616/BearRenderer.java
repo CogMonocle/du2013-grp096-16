@@ -4,9 +4,14 @@ import org.lwjgl.opengl.GL11;
 
 public class BearRenderer
 {
-	public void init()
+	public BearRenderer()
 	{
 		initGL();
+	}
+	
+	public void renderWorld(BearWorld w)
+	{
+		
 	}
 	
 	public void initGL()

@@ -18,6 +18,7 @@ public class BearGame
 	
 	private BearDisplay display;
 	private BearWorld world;
+	private BearRenderer renderer;
 	private GameState curState;
 	
 	private long lastFrame;
@@ -40,6 +41,7 @@ public class BearGame
 		distanceMoved = 0;
 		initDisplay();
 		curState = GameState.SPLASH;
+		renderer = new BearRenderer();
 	}
 	
 	public void initDisplay()
@@ -63,9 +65,20 @@ public class BearGame
 			boolean state = Keyboard.getEventKeyState();
 			if(state)
 			{
-				if(key == Keyboard.KEY_ESCAPE)
+				//If in menus, esc to close
+				if(key == Keyboard.KEY_ESCAPE && curState == GameState.MENU || curState == GameState.SPLASH)
 				{
 					shouldClose = true;
+				}
+				//P to toggle paused (only works in game)
+				else if(key == Keyboard.KEY_P)
+				{
+					togglePaused();
+				}
+				//Any key to go from splash to menu (except for escape)
+				else if(curState == GameState.SPLASH)
+				{
+					curState = GameState.MENU;
 				}
 			}
 		}
@@ -83,10 +96,25 @@ public class BearGame
 	public void update()
 	{
 		pollInputs();
-//		world.update();
-		//TODO Render
+		if(curState == GameState.ACTIVE)
+		{
+			world.update();
+			renderer.renderWorld(world);
+		}
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		display.update();
+	}
+	
+	public void togglePaused()
+	{
+		if(curState == GameState.ACTIVE)
+		{
+			curState = GameState.PAUSED;
+		}
+		else if(curState == GameState.PAUSED)
+		{
+			curState = GameState.ACTIVE;
+		}
 	}
 	
 	public void cleanup()

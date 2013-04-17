@@ -7,6 +7,8 @@ import org.lwjgl.opengl.GL11;
 
 public class BearGame
 {
+	public static final String TEXTURE_PATH = "resources/texures/";
+	public static final String SOUND_PATH = "resources/sounds/";
 	public static final int WINDOW_WIDTH = 800;
 	public static final int WINDOW_HEIGHT = 600;
 	public static double BEAR_SPEED = 0.1;

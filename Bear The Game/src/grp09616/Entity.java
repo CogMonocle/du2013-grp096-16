@@ -55,14 +55,7 @@ public abstract class Entity
 	 * texture was loaded
 	 */
 	public abstract int getTextureID();
-	
-	/**
-	 * @return True if texture is successfully loaded after function runs
-	 * regardless if the texture was loaded previously or loaded during
-	 * current function call. False otherwise.
-	 */
-	public abstract boolean loadTextures();
-	
+		
 	/**
 	 * @param newID - the id the function is to be set to.
 	 * If the entity already has an id, this function has no effect.

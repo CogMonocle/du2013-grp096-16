@@ -9,9 +9,7 @@ import org.newdawn.slick.util.ResourceLoader;
 
 public class TextureManager
 {
-	public static final int RESOLUTION = 16;
-	public static final int SIZE = 4;
-	
+
 	private static int currentTexture;
 	
 	public static ArrayList<Texture> textures;
@@ -22,7 +20,7 @@ public class TextureManager
 		textures = new ArrayList<Texture>();
 	}
 	
-	//location relative to the main directory (ie. 2 up from the hspork package)
+	//location relative to the main directory
 	public static int loadTextures(String loc)
 	{
 		try {
@@ -51,6 +49,18 @@ public class TextureManager
 		return -1;
 	}
 	
+	public static Texture getTexture(int id)
+	{
+		for(Texture t: textures)
+		{
+			if(t.getTextureID() == id)
+			{
+				return t;
+			}
+		}
+		return null;
+	}
+	
 	public static boolean setTextureImage(int id)
 	{
 		if(id == currentTexture)
@@ -61,7 +71,7 @@ public class TextureManager
 		{
 			if(t.getTextureID() == id)
 			{
-				currentTexture = t.getTextureID();
+				currentTexture = id;
 				t.bind();
 				return true;
 			}

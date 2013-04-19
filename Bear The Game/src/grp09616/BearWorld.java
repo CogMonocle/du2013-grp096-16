@@ -3,7 +3,6 @@ package grp09616;
 public class BearWorld
 {
 	public int MAX_ENTITIES = 64;
-	public int GROUND_HEIGHT = 30;
 	
 	private Entity[] entities;
 

@@ -7,11 +7,12 @@ import org.lwjgl.opengl.GL11;
 
 public class BearGame
 {
-	public static final String TEXTURE_PATH = "resources/texures/";
+	public static final String TEXTURE_PATH = "resources/textures/";
 	public static final String SOUND_PATH = "resources/sounds/";
+	public static final double BEAR_SPEED = 0.1;
 	public static final int WINDOW_WIDTH = 800;
 	public static final int WINDOW_HEIGHT = 600;
-	public static double BEAR_SPEED = 0.1;
+	public static final int GROUND_HEIGHT = 30;
 	
 	private enum GameState
 	{
@@ -20,7 +21,6 @@ public class BearGame
 	
 	private BearDisplay display;
 	private BearWorld world;
-	private BearRenderer renderer;
 	private GameState curState;
 	
 	private long lastFrame;
@@ -42,8 +42,9 @@ public class BearGame
 		shouldClose = false;
 		distanceMoved = 0;
 		initDisplay();
-		curState = GameState.SPLASH;
-		renderer = new BearRenderer();
+		curState = GameState.ACTIVE;
+		world = new BearWorld(WINDOW_WIDTH, WINDOW_HEIGHT);
+		TextureManager.initialize();
 	}
 	
 	public void initDisplay()
@@ -68,7 +69,7 @@ public class BearGame
 			if(state)
 			{
 				//If in menus, esc to close
-				if(key == Keyboard.KEY_ESCAPE && curState == GameState.MENU || curState == GameState.SPLASH)
+				if(key == Keyboard.KEY_ESCAPE /*&& (curState == GameState.MENU || curState == GameState.SPLASH)*/)
 				{
 					shouldClose = true;
 				}
@@ -101,9 +102,8 @@ public class BearGame
 		if(curState == GameState.ACTIVE)
 		{
 			world.update();
-			renderer.renderWorld(world);
+			BearRenderer.renderWorld(world);
 		}
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		display.update();
 	}
 	

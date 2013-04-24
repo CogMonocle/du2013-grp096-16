@@ -17,6 +17,7 @@ public class EntityBear extends Entity
 	
 	public EntityBear()
 	{
+		super(BearGame.BEAR_LEFTPOS, BearGame.GROUND_HEIGHT);
 		curState = BearState.STANDING;
 	}
 	
@@ -30,7 +31,7 @@ public class EntityBear extends Entity
 	}
 	
 	@Override
-	public void onDeath()
+	public void onRemove()
 	{
 		// TODO Auto-generated method stub
 		
@@ -56,5 +57,17 @@ public class EntityBear extends Entity
 			return textureIDs[3];
 		}
 		return -1;
+	}
+
+	@Override
+	public int getWidth()
+	{
+		return 0;
+	}
+
+	@Override
+	public int getHeight()
+	{
+		return 0;
 	}
 }

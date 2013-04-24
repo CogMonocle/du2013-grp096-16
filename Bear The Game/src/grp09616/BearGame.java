@@ -9,10 +9,11 @@ public class BearGame
 {
 	public static final String TEXTURE_PATH = "resources/textures/";
 	public static final String SOUND_PATH = "resources/sounds/";
-	public static final double BEAR_SPEED = 0.1;
+	public static final double BEAR_SPEED = 0.5;
 	public static final int WINDOW_WIDTH = 800;
 	public static final int WINDOW_HEIGHT = 600;
-	public static final int GROUND_HEIGHT = 30;
+	public static final int GROUND_HEIGHT = 80;
+	public static final int BEAR_LEFTPOS = 80;
 	
 	private enum GameState
 	{
@@ -24,7 +25,6 @@ public class BearGame
 	private GameState curState;
 	
 	private long lastFrame;
-	private double distanceMoved;
 	private boolean shouldClose;
 	
 	public void start()
@@ -40,7 +40,6 @@ public class BearGame
 	public void init()
 	{
 		shouldClose = false;
-		distanceMoved = 0;
 		initDisplay();
 		curState = GameState.ACTIVE;
 		world = new BearWorld(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -74,9 +73,14 @@ public class BearGame
 					shouldClose = true;
 				}
 				//P to toggle paused (only works in game)
-				else if(key == Keyboard.KEY_P)
+				else if(key == Keyboard.KEY_P && curState == GameState.ACTIVE)
 				{
-					togglePaused();
+					//togglePaused();
+				}
+				else if(key == Keyboard.KEY_W && curState == GameState.ACTIVE)
+				{
+					world.roar(1);
+					world.setRoaring(true);
 				}
 				//Any key to go from splash to menu (except for escape)
 				else if(curState == GameState.SPLASH)
@@ -84,6 +88,17 @@ public class BearGame
 					curState = GameState.MENU;
 				}
 			}
+			else
+			{
+				if(key == Keyboard.KEY_W && curState == GameState.ACTIVE)
+				{
+					world.setRoaring(false);
+				}
+			}
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
+		{
+			move(1);
 		}
 		if(Display.isCloseRequested())
 		{
@@ -93,7 +108,7 @@ public class BearGame
 	
 	public void move(int dir)
 	{
-		distanceMoved += dir * BEAR_SPEED;
+		world.incrementDistance(BEAR_SPEED * dir);
 	}
 	
 	public void update()
@@ -140,6 +155,7 @@ public class BearGame
 	
 	public static void main(String[]  args)
 	{
+		//System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/natives/");
 		BearGame bear = new BearGame();
 		bear.start();
 	}

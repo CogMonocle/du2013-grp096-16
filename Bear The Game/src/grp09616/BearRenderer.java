@@ -6,12 +6,16 @@ import org.newdawn.slick.opengl.Texture;
 public class BearRenderer
 {
 	private static final int NUM_GROUND_TEXTURES = 1;
+	private static final int NUM_BUTTONS = 3;
 	private static final double GROUND_TEXT_HEIGHT = BearGame.WINDOW_HEIGHT - BearGame.GROUND_HEIGHT;
 	private static final double GROUND_TEXT_WIDTH = BearGame.WINDOW_WIDTH;
 	private static final double BACKGROUND_SPEED_MODIFIER = 0.2;
 	
 	private static int[] groundTextures;
+	private static int[] buttonTextures;
 	private static int backgroundTexture;
+	private static int splashTexture;
+	private static int menuTexture;
 	
 	static
 	{
@@ -59,6 +63,18 @@ public class BearRenderer
 		GL11.glEnd();
 	}
 	
+	public static void renderMenu()
+	{
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glBegin(GL11.GL_QUADS);
+		
+		GL11.glColor3f(0.2f, 0.9f, 0.2f);
+		BearRenderer.drawRect(0, 0, BearGame.WINDOW_WIDTH, BearGame.WINDOW_HEIGHT, menuTexture);	
+		
+		GL11.glColor3f(0.4f, 0.2f, 0.2f);
+		BearRenderer.drawRect(200, 200, 300, 100, buttonTextures[0]);
+	}
+	
 	public static void initGL()
 	{
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -74,7 +90,14 @@ public class BearRenderer
 		{
 			groundTextures[i] = TextureManager.loadTextures(BearGame.TEXTURE_PATH + "scenery/ground" + i + ".png");
 		}
+		buttonTextures = new int[NUM_BUTTONS];
+		for(int i = 0; i < NUM_GROUND_TEXTURES; i++)
+		{
+			buttonTextures[i] = TextureManager.loadTextures(BearGame.TEXTURE_PATH + "menu/button" + i + ".png");
+		}
 		backgroundTexture = TextureManager.loadTextures(BearGame.TEXTURE_PATH + "scenery/background.png");
+		splashTexture = TextureManager.loadTextures(BearGame.TEXTURE_PATH + "menu/splash.png");
+		menuTexture = TextureManager.loadTextures(BearGame.TEXTURE_PATH + "menu/background.png");
 	}
 	
 	public static void drawRectNoText(double x, double y, double w, double h)

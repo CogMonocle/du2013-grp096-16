@@ -8,12 +8,16 @@ public abstract class EntityEnemy extends Entity
 	}
 
 	public abstract int getDifficulty();
-	
+
 	public abstract void kill();
+
+	public abstract void attemptAttack();
+	
+	public abstract boolean isAlive();
 	
 	public void roarAt(int pwr)
 	{
-		if(pwr > getDifficulty())
+		if (pwr > getDifficulty())
 		{
 			kill();
 		}

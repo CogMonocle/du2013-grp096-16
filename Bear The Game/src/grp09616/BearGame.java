@@ -1,42 +1,44 @@
 package grp09616;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-
 
 public class BearGame
 {
 	public static final String TEXTURE_PATH = "resources/textures/";
 	public static final String SOUND_PATH = "resources/sounds/";
-	public static final double BEAR_SPEED = 0.5;
+	public static final double BEAR_SPEED = 0.25;
 	public static final int WINDOW_WIDTH = 800;
 	public static final int WINDOW_HEIGHT = 600;
 	public static final int GROUND_HEIGHT = 80;
 	public static final int BEAR_LEFTPOS = 80;
-	
+
 	private enum GameState
 	{
 		SPLASH, MENU, ACTIVE, PAUSED
 	}
-	
+
 	private BearDisplay display;
 	private BearWorld world;
 	private GameState curState;
-	
+
 	private long lastFrame;
 	private boolean shouldClose;
-	
+
 	public void start()
 	{
+		int delta;
+		
 		init();
-		while(!shouldClose)
+		while (!shouldClose)
 		{
-			update();
+			delta = getDelta();
+			update(delta);
 		}
 		cleanup();
-	}	
-	
+	}
+
 	public void init()
 	{
 		shouldClose = false;
@@ -44,118 +46,132 @@ public class BearGame
 		curState = GameState.ACTIVE;
 		world = new BearWorld(WINDOW_WIDTH, WINDOW_HEIGHT);
 		TextureManager.initialize();
+		getDelta();
 	}
-	
+
 	public void initDisplay()
 	{
-		try 
+		try
 		{
 			display = new BearDisplay(WINDOW_WIDTH, WINDOW_HEIGHT);
-		}
-		catch (LWJGLException e)
+		} catch (LWJGLException e)
 		{
 			e.printStackTrace();
 			System.exit(1);
 		}
 	}
-	
+
 	public void pollInputs()
 	{
-		while(Keyboard.next())
+		while (Keyboard.next())
 		{
 			int key = Keyboard.getEventKey();
 			boolean state = Keyboard.getEventKeyState();
-			if(state)
+			if (state)
 			{
-				//If in menus, esc to close
-				if(key == Keyboard.KEY_ESCAPE /*&& (curState == GameState.MENU || curState == GameState.SPLASH)*/)
+				// If in menus, esc to close
+				if (key == Keyboard.KEY_ESCAPE /*
+												 * && (curState ==
+												 * GameState.MENU || curState ==
+												 * GameState.SPLASH)
+												 */)
 				{
 					shouldClose = true;
 				}
-				//P to toggle paused (only works in game)
-				else if(key == Keyboard.KEY_P && curState == GameState.ACTIVE)
+				else if((key == Keyboard.KEY_Q) || (key == Keyboard.KEY_A)
+						|| (key == Keyboard.KEY_E) || (key == Keyboard.KEY_D))
 				{
-					//togglePaused();
+					world.enterRoarCharacter(key);
 				}
-				else if(key == Keyboard.KEY_W && curState == GameState.ACTIVE)
+				// Right arrow to move forward
+				else if ((key == Keyboard.KEY_RIGHT) && (curState == GameState.ACTIVE))
 				{
-					world.roar(1);
+					world.beginWalk(BEAR_SPEED);
+				}
+				// P to toggle paused (only works in game)
+				else if ((key == Keyboard.KEY_P)
+						&& (curState == GameState.ACTIVE))
+				{
+					// togglePaused();
+				} 
+				else if ((key == Keyboard.KEY_W)
+						&& (curState == GameState.ACTIVE))
+				{
 					world.setRoaring(true);
 				}
-				//Any key to go from splash to menu (except for escape)
-				else if(curState == GameState.SPLASH)
+				// Any key to go from splash to menu (except for escape)
+				else if (curState == GameState.SPLASH)
 				{
 					curState = GameState.MENU;
 				}
-			}
-			else
+			} else
 			{
-				if(key == Keyboard.KEY_W && curState == GameState.ACTIVE)
+				if ((key == Keyboard.KEY_RIGHT) && (curState == GameState.ACTIVE))
 				{
+					world.stopWalk();
+				}
+				else if ((key == Keyboard.KEY_W) && (curState == GameState.ACTIVE))
+				{
+					world.roar();
 					world.setRoaring(false);
 				}
 			}
 		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
-		{
-			move(1);
-		}
-		if(Display.isCloseRequested())
+		if (Display.isCloseRequested())
 		{
 			shouldClose = true;
 		}
 	}
-	
+
 	public void move(int dir)
 	{
-		world.incrementDistance(BEAR_SPEED * dir);
+		world.beginWalk(BEAR_SPEED * dir);
 	}
-	
-	public void update()
+
+	public void update(int delta)
 	{
 		pollInputs();
-		if(curState == GameState.ACTIVE)
+		if (curState == GameState.ACTIVE)
 		{
-			world.update();
+			world.update(delta);
 			BearRenderer.renderWorld(world);
 		}
 		display.update();
 	}
-	
+
 	public void togglePaused()
 	{
-		if(curState == GameState.ACTIVE)
+		if (curState == GameState.ACTIVE)
 		{
 			curState = GameState.PAUSED;
-		}
-		else if(curState == GameState.PAUSED)
+		} else if (curState == GameState.PAUSED)
 		{
 			curState = GameState.ACTIVE;
 		}
 	}
-	
+
 	public void cleanup()
 	{
 		display.cleanup();
 	}
-	
+
 	public int getDelta()
 	{
-	    long time = getTime();
-	    int delta = (int) (time - lastFrame);
-	    lastFrame = time;
-	    	
-	    return delta;
+		long time = getTime();
+		int delta = (int) (time - lastFrame);
+		lastFrame = time;
+
+		return delta;
 	}
-	
+
 	public long getTime()
 	{
-	    return System.nanoTime() / 1000000;
+		return System.nanoTime() / 1000000;
 	}
-	
-	public static void main(String[]  args)
+
+	public static void main(String[] args)
 	{
-		//System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/natives/");
+		System.setProperty("org.lwjgl.librarypath", "user.dir/natives/");
 		BearGame bear = new BearGame();
 		bear.start();
 	}

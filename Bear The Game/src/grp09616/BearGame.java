@@ -171,7 +171,7 @@ public class BearGame
 
 	public static void main(String[] args)
 	{
-		//System.setProperty("org.lwjgl.librarypath", "user.dir/natives/");
+		//System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/natives/");
 		BearGame bear = new BearGame();
 		bear.start();
 	}

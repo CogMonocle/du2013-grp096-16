@@ -7,11 +7,12 @@ import org.lwjgl.opengl.Display;
 public class BearGame
 {
 	public static final String TEXTURE_PATH = "resources/textures/";
-	public static final String SOUND_PATH = "resources/sounds/";
+	public static final String SOUND_PATH = "resources/sound/";
 	public static final double BEAR_SPEED = 0.25;
 	public static final int WINDOW_WIDTH = 800;
 	public static final int WINDOW_HEIGHT = 600;
 	public static final int GROUND_HEIGHT = 80;
+	public static final int GROUND_POS = WINDOW_HEIGHT - GROUND_HEIGHT;
 	public static final int BEAR_LEFTPOS = 80;
 
 	private enum GameState
@@ -45,7 +46,8 @@ public class BearGame
 		initDisplay();
 		curState = GameState.ACTIVE;
 		world = new BearWorld(WINDOW_WIDTH, WINDOW_HEIGHT);
-		TextureManager.initialize();
+		ManagerTextures.initialize();
+		ManagerSound.initialize();
 		getDelta();
 	}
 
@@ -153,6 +155,7 @@ public class BearGame
 	public void cleanup()
 	{
 		display.cleanup();
+		ManagerSound.cleanup();
 	}
 
 	public int getDelta()

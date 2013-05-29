@@ -97,7 +97,7 @@ public class EntityBear extends Entity
 			{
 				if (i < WALKING_FRAMES)
 				{
-					textureIDs[i] = TextureManager
+					textureIDs[i] = ManagerTextures
 							.loadTextures(BearGame.TEXTURE_PATH
 									+ "bear/teddisonrun" + i + ".png");
 				} else

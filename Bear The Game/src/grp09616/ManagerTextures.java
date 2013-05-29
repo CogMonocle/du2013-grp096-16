@@ -8,7 +8,7 @@ import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
-public class TextureManager
+public class ManagerTextures
 {
 
 	private static int currentTexture;

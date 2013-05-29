@@ -118,7 +118,7 @@ public class BearWorld
 	public void incrementDistance(double d)
 	{
 		distanceMoved += d;
-		BearRenderer.shiftGroundDisplacement(d);
+		RendererWorld.shiftGroundDisplacement(d);
 	}
 
 	public double getDMoved()

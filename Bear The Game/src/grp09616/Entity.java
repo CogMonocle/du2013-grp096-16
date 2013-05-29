@@ -40,9 +40,12 @@ public abstract class Entity
 		yPos += amt;
 	}
 
+	/**
+	 * Code to be run every tick
+	 */
 	public void update()
 	{
-		if ((getXPos() + getWidth()) - world.getDMoved() > 0)
+		if (((getXPos() + getWidth()) - world.getDMoved()) > 0)
 		{
 			world.removeEntity(getID());
 		}

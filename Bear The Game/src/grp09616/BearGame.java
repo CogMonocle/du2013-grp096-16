@@ -136,7 +136,7 @@ public class BearGame
 		if (curState == GameState.ACTIVE)
 		{
 			world.update(delta);
-			BearRenderer.renderWorld(world);
+			RendererWorld.renderWorld(world);
 		}
 		display.update();
 	}

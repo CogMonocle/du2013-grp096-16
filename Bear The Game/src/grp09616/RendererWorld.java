@@ -5,7 +5,7 @@ import java.util.Random;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 
-public class BearRenderer
+public class RendererWorld
 {
 	private static final double GROUND_TEXT_HEIGHT = BearGame.WINDOW_HEIGHT
 			- BearGame.GROUND_HEIGHT;
@@ -92,11 +92,11 @@ public class BearRenderer
 		GL11.glBegin(GL11.GL_QUADS);
 
 		GL11.glColor3f(0.2f, 0.9f, 0.2f);
-		BearRenderer.drawRect(0, 0, BearGame.WINDOW_WIDTH,
+		RendererWorld.drawRect(0, 0, BearGame.WINDOW_WIDTH,
 				BearGame.WINDOW_HEIGHT, menuTexture, false);
 
 		GL11.glColor3f(0.4f, 0.2f, 0.2f);
-		BearRenderer.drawRect(200, 200, 300, 100, buttonTextures[0], false);
+		RendererWorld.drawRect(200, 200, 300, 100, buttonTextures[0], false);
 	}
 
 	public static void initGL()
@@ -133,10 +133,6 @@ public class BearRenderer
 					.loadTextures(BearGame.TEXTURE_PATH + "scenery/background"
 							+ i + ".png");
 		}
-		// splashTexture = TextureManager.loadTextures(BearGame.TEXTURE_PATH +
-		// "menu/splash.png");
-		// menuTexture = TextureManager.loadTextures(BearGame.TEXTURE_PATH +
-		// "menu/background.png");
 		energyPipTexture = ManagerTextures.loadTextures(BearGame.TEXTURE_PATH + "gui/enPip.png");
 		EntityBear.loadTextures();
 	}

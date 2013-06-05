@@ -15,7 +15,7 @@ public class ManagerSound
 		try
 		{
 			music = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream(BearGame.SOUND_PATH + "music/MemphisJugBand-StealinStealin.wav"));
-			music.playAsMusic(1.0f, 1.0f, true);
+			//music.playAsMusic(1.0f, 1.0f, true);
 		}
 		catch (IOException e)
 		{

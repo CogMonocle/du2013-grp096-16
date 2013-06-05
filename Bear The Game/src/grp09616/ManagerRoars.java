@@ -5,31 +5,28 @@ import java.util.Random;
 public class ManagerRoars
 {
 	public static final char[] ROAR_KEYS = {'q', 'a', 'e', 'd'}; 
-	public static final char NULL_CHAR = ' ';
 	
 	private static Random r;
 	private static int roarLevel;
 	private static char roarChar;
 	
-	public static void init()
+	public static void initialize()
 	{
 		r = new Random();
 		roarLevel = 0;
-		roarChar = NULL_CHAR;
+		roarChar = getRandomRoarChar();
 	}
 	
 	public static boolean roar(char ch)
 	{
-		if(roarChar == NULL_CHAR)
-		{
-			roarChar = getRandomRoarChar();
-		}
 		if(ch == roarChar)
 		{
 			roarLevel++;
 			roarChar = getRandomRoarChar();
 			return true;
 		}
+		roarLevel--;
+		roarChar = getRandomRoarChar();
 		return false;
 	}
 	
@@ -52,7 +49,7 @@ public class ManagerRoars
 	{
 		int output = roarLevel;
 		roarLevel = 0;
-		roarChar = NULL_CHAR;
+		roarChar = getRandomRoarChar();
 		return output;
 	}
 }

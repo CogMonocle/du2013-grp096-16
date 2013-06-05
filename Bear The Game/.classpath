@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/Justin/Documents/LWJGL/lwjgl-2.8.4/native/windows"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Justin/Documents/LWJGL/lwjgl-2.8.4/jar/lwjgl.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/Justin/Documents/LWJGL/lwjgl-docs-1.0.zip!/javadoc"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Justin/Documents/Slick Util/slick-util.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

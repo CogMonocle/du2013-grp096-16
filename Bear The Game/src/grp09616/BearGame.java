@@ -50,6 +50,7 @@ public class BearGame
 		world = new BearWorld(WINDOW_WIDTH, WINDOW_HEIGHT);
 		ManagerTextures.initialize();
 		ManagerSound.initialize();
+		ManagerRoars.initialize();
 		getDelta();
 	}
 

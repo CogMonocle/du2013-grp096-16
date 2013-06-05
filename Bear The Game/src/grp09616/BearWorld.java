@@ -12,6 +12,7 @@ public class BearWorld
 	private double distanceMoved;
 	private double prevDistanceMoved;
 	private double walkSpeed;
+	private int score;
 	private final int width;
 	private final int height;
 	private boolean roaring;
@@ -42,7 +43,7 @@ public class BearWorld
 		if (((distanceMoved % 1000) >= 500)
 				&& ((prevDistanceMoved % 1000) < 500))
 		{
-			addEntity(new EntityEnemySimple(BearGame.WINDOW_WIDTH
+			addEntity(new EntityEnemy(BearGame.WINDOW_WIDTH
 					+ distanceMoved, BearGame.GROUND_HEIGHT));
 		}
 		for(Entity e : entities)
@@ -52,7 +53,7 @@ public class BearWorld
 				EntityEnemy enemy = (EntityEnemy) e;
 				if((enemy.getXPos() < (((BearGame.BEAR_LEFTPOS + 50)) + distanceMoved)) && enemy.isAlive())
 				{
-					damageBear(enemy.getDifficulty() + 1);
+					enemy.attemptAttack();
 					enemy.kill();
 				}
 			}
@@ -73,7 +74,10 @@ public class BearWorld
 			Entity e = entities[i];
 			if ((e != null) && (e instanceof EntityEnemy))
 			{
-				((EntityEnemy) e).roarAt(roarPower);
+				if(((EntityEnemy) e).roarAt(roarPower))
+				{
+					score += ((EntityEnemy) e).getDifficulty();
+				}
 			}
 		}
 	}
@@ -155,5 +159,10 @@ public class BearWorld
 	{
 		entities[id].onRemove();
 		entities[id] = null;
+	}
+	
+	public int getScore()
+	{
+		return score;
 	}
 }

@@ -7,6 +7,7 @@ public class EntityBear extends Entity
 	public static final int FPS = 4;
 	public static final int WALKING_FRAMES = 4;
 	public static final int ROARING_FRAMES = 1;
+	public static final int BEGIN_ENG = 100;
 
 	static int[] textureIDs;
 
@@ -24,7 +25,7 @@ public class EntityBear extends Entity
 	{
 		super(BearGame.BEAR_LEFTPOS, BearGame.GROUND_HEIGHT);
 		curState = BearState.STANDING;
-		energy = 10;
+		energy = BEGIN_ENG;
 	}
 
 	@Override

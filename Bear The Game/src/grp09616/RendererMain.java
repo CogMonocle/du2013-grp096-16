@@ -1,39 +1,41 @@
 package grp09616;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.io.IOException;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.util.ResourceLoader;
 
-public class RendererWorld
+public class RendererMain
 {
 	private static final double GROUND_TEXT_HEIGHT = BearGame.WINDOW_HEIGHT
 			- BearGame.GROUND_HEIGHT;
 	private static final double GROUND_TEXT_WIDTH = BearGame.WINDOW_WIDTH;
-	private static final double BACKGROUND_SPEED_MODIFIER = 0.2;
-	private static final double BACKGROUND_SCALE_MODIFIER = 0.90;
+	private static final double BACKGROUND_SPEED_MODIFIER = 0.5;
+	private static final double BACKGROUND_SCALE_MODIFIER = 0.95;
 	private static final double BEAR_OFFSET = 80;
 	private static final double BEAR_HEIGHT = (BearGame.WINDOW_HEIGHT + BEAR_OFFSET)
 			- BearGame.GROUND_HEIGHT;
 	private static final int NUM_GROUND_TEXTURES = 1;
-	private static final int NUM_BUTTONS = 3;
 	private static final int WALKING_FRAMES = 4;
-	private static final int BACKGROUND_LAYERS = 3;
-	private static final int BEAR_HEALTH_PIPS = 10;
+	private static final int BACKGROUND_LAYERS = 10;
+	private static final int NUM_BACKGROUND_TEXTURES = 3;
 
 	private static IntegerQueue groundPieces;
 	private static Random r;
+	private static TrueTypeFont bearFont;
 
 	private static int[] groundTextures;
-	private static int[] buttonTextures;
 	private static int[] walkingTextures;
 	private static int[] foodTextures;
 	private static int backgroundTextures[];
 	private static double totalGroundPieceWidth;
 	private static double groundDisplacement;
-	private static int splashTexture;
-	private static int menuTexture;
-	private static int energyPipTexture;
+	private static int keyTexture;
 
 	static
 	{
@@ -83,20 +85,7 @@ public class RendererWorld
 		}
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		
-		drawGUI(w);
-	}
-
-	public static void renderMenu()
-	{
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		GL11.glBegin(GL11.GL_QUADS);
-
-		GL11.glColor3f(0.2f, 0.9f, 0.2f);
-		RendererWorld.drawRect(0, 0, BearGame.WINDOW_WIDTH,
-				BearGame.WINDOW_HEIGHT, menuTexture, false);
-
-		GL11.glColor3f(0.4f, 0.2f, 0.2f);
-		RendererWorld.drawRect(200, 200, 300, 100, buttonTextures[0], false);
+		drawHUD(w);
 	}
 
 	public static void initGL()
@@ -112,29 +101,29 @@ public class RendererWorld
 
 	public static void loadTextures()
 	{
-		groundTextures = new int[NUM_GROUND_TEXTURES];
-		for (int i = 0; i < NUM_GROUND_TEXTURES; i++)
+		try
 		{
-			groundTextures[i] = ManagerTextures
-					.loadTextures(BearGame.TEXTURE_PATH + "scenery/ground" + i
-							+ ".png");
+			bearFont = new TrueTypeFont(Font.createFont(Font.TRUETYPE_FONT, ResourceLoader.getResourceAsStream(BearGame.FONT_PATH + "ANUDRG__.ttf")), false);
 		}
-		buttonTextures = new int[NUM_BUTTONS];
-		for (int i = 0; i < NUM_GROUND_TEXTURES; i++)
+		catch (FontFormatException | IOException e)
 		{
-			// buttonTextures[i] =
-			// TextureManager.loadTextures(BearGame.TEXTURE_PATH + "menu/button"
-			// + i + ".png");
+			System.err.println("Failed to load font.");
+			e.printStackTrace();
 		}
-		backgroundTextures = new int[BACKGROUND_LAYERS];
-		for (int i = 0; i < BACKGROUND_LAYERS; i++)
-		{
-			backgroundTextures[i] = ManagerTextures
-					.loadTextures(BearGame.TEXTURE_PATH + "scenery/background"
-							+ i + ".png");
-		}
-		energyPipTexture = ManagerTextures.loadTextures(BearGame.TEXTURE_PATH + "gui/enPip.png");
+		groundTextures = loadTextureArray("scenery/ground", NUM_GROUND_TEXTURES);
+		backgroundTextures = loadTextureArray("scenery/background", NUM_BACKGROUND_TEXTURES);
+		keyTexture = ManagerTextures.loadTextures(BearGame.TEXTURE_PATH + "HUD/keyboardbutton.png");
 		EntityBear.loadTextures();
+	}
+	
+	public static int[] loadTextureArray(String path, int amt)
+	{
+		int[] temp = new int[amt];
+		for(int i = 0; i < amt; i++)
+		{
+			temp[i] = ManagerTextures.loadTextures(BearGame.TEXTURE_PATH + path + i + ".png");
+		}
+		return temp;
 	}
 
 	public static void drawRectNoText(double x, double y, double w, double h)
@@ -182,7 +171,7 @@ public class RendererWorld
 		Texture t = ManagerTextures.getTexture(texture);
 		double cW = wScale * t.getImageWidth();
 		double cH = hScale * t.getImageHeight();
-		double y = (yBot - t.getImageHeight());
+		double y = (yBot - cH);
 
 		ManagerTextures.setTextureImage(texture);
 
@@ -200,16 +189,43 @@ public class RendererWorld
 		GL11.glEnd();
 	}
 	
-	public static void drawGUI(BearWorld w)
+	public static void drawRectScaleCenter(double x, double y, double wScale,
+			double hScale, int texture)
+	{
+		Texture t = ManagerTextures.getTexture(texture);
+		double cW = (wScale * t.getImageWidth()) / 2;
+		double cH = (hScale * t.getImageHeight()) / 2;
+		double cY = (y - t.getImageHeight());
+
+		ManagerTextures.setTextureImage(texture);
+
+		GL11.glBegin(GL11.GL_QUADS);
+
+		GL11.glTexCoord2d(0, 0);
+		GL11.glVertex2d(x - cW, cY - cH);
+		GL11.glTexCoord2d(0, 1);
+		GL11.glVertex2d(x - cW, cY + cH);
+		GL11.glTexCoord2d(1, 1);
+		GL11.glVertex2d(x + cW, cY + cH);
+		GL11.glTexCoord2d(1, 0);
+		GL11.glVertex2d(x + cW, cY - cH);
+
+		GL11.glEnd();
+	}
+	
+	public static void drawHUD(BearWorld w)
 	{
 		int energy = w.getBearEnergy();
-		GL11.glColor3f(0.1f * (BEAR_HEALTH_PIPS - energy), 0.1f * energy, 0.1f);
-		for(int i = 0; i < energy; i++)
+		GL11.glColor3f(1.0f, 1.0f, 1.0f);
+		if(w.isRoaring())
 		{
-			drawRectScale(10 + (15 * i), 50, 1, 1, energyPipTexture);
+			drawRectScale(BearGame.BEAR_LEFTPOS + 70, BearGame.WINDOW_HEIGHT + 60, 1, 1, keyTexture);
+			GL11.glColor3f(0.0f, 0.0f, 0.0f);
+			bearFont.drawString(BearGame.BEAR_LEFTPOS + 70, BearGame.WINDOW_HEIGHT + 60, String.valueOf(ManagerRoars.getRoarChar()));
+			GL11.glColor3f(1.0f, 1.0f, 1.0f);
 		}
 	}
-
+	
 	public static void drawBackground(BearWorld w)
 	{
 		double backgroundWidth;
@@ -233,15 +249,15 @@ public class RendererWorld
 			} else
 			{
 				backgroundWidth = ManagerTextures.getTexture(
-						backgroundTextures[(i % 2) + 1]).getImageWidth()
+						backgroundTextures[(i % (NUM_BACKGROUND_TEXTURES - 1)) + 1]).getImageWidth()
 						* scaleMod;
 				shift = -1 * ((w.getDMoved() * speedMod) % backgroundWidth);
-				numTiles = (int) Math.floor(1 / scaleMod) + 1;
-				drawRect(shift, BearGame.GROUND_HEIGHT, BearGame.WINDOW_WIDTH * scaleMod,
-						BearGame.WINDOW_HEIGHT * scaleMod, backgroundTextures[(i % 2) + 1], true);
-				drawRect(backgroundWidth + shift, BearGame.GROUND_HEIGHT, BearGame.WINDOW_WIDTH
-						* scaleMod, BearGame.WINDOW_HEIGHT * scaleMod,
-						backgroundTextures[(i % 2) + 1], true);
+				numTiles = (int) Math.floor(1 / scaleMod) + 2;
+				for(int q = 0; q < numTiles; q++)
+				{
+					drawRect((backgroundWidth * q) + shift, 0 - BearGame.GROUND_HEIGHT, BearGame.WINDOW_WIDTH * scaleMod,
+							BearGame.WINDOW_HEIGHT * scaleMod, backgroundTextures[((i % NUM_BACKGROUND_TEXTURES) - 1) + 1], true);
+				}
 			}
 			speedMod /= BACKGROUND_SPEED_MODIFIER;
 			scaleMod /= BACKGROUND_SCALE_MODIFIER;

@@ -2,7 +2,7 @@ package grp09616;
 
 public abstract class Entity
 {
-	private BearWorld world;
+	protected BearWorld world;
 
 	private int id;
 

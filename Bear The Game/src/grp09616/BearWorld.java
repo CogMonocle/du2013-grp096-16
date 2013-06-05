@@ -1,6 +1,5 @@
 package grp09616;
 
-import org.lwjgl.input.Keyboard;
 
 public class BearWorld
 {
@@ -15,7 +14,6 @@ public class BearWorld
 	private double walkSpeed;
 	private final int width;
 	private final int height;
-	private int curRoarPower;
 	private boolean roaring;
 	private boolean walking;
 	private final boolean wasWalking;
@@ -28,7 +26,6 @@ public class BearWorld
 		walkSpeed = 0;
 		width = w;
 		height = h;
-		curRoarPower = 0;
 		roaring = false;
 		bear = new EntityBear();
 		addEntity(bear);
@@ -55,7 +52,7 @@ public class BearWorld
 				EntityEnemy enemy = (EntityEnemy) e;
 				if((enemy.getXPos() < (((BearGame.BEAR_LEFTPOS + 50)) + distanceMoved)) && enemy.isAlive())
 				{
-					bear.hit(enemy.getDifficulty() + 1);
+					damageBear(enemy.getDifficulty() + 1);
 					enemy.kill();
 				}
 			}
@@ -63,24 +60,20 @@ public class BearWorld
 		prevDistanceMoved = distanceMoved;
 	}
 	
-	public void enterRoarCharacter(int key)
+	public void enterRoarCharacter(char c)
 	{
-		if(((curRoarPower == 0) && (key == Keyboard.KEY_E))
-				|| ((curRoarPower == 1) && (key == Keyboard.KEY_Q))
-				|| ((curRoarPower == 2) && (key == Keyboard.KEY_A)))
-		{
-			curRoarPower++;
-		}
+		ManagerRoars.roar(c);
 	}
 
 	public void roar()
 	{
+		int roarPower = ManagerRoars.finishRoar();
 		for (int i = 0; i < MAX_ENTITIES; i++)
 		{
 			Entity e = entities[i];
 			if ((e != null) && (e instanceof EntityEnemy))
 			{
-				((EntityEnemy) e).roarAt(curRoarPower);
+				((EntityEnemy) e).roarAt(roarPower);
 			}
 		}
 	}
@@ -88,7 +81,6 @@ public class BearWorld
 	public void setRoaring(boolean r)
 	{
 		roaring = r;
-		curRoarPower = 0;
 	}
 
 	public boolean isRoaring()
@@ -99,6 +91,11 @@ public class BearWorld
 	public int getBearEnergy()
 	{
 		return bear.getEnergy();
+	}
+	
+	public void damageBear(int d)
+	{
+		bear.hit(d);
 	}
 	
 	public void beginWalk(double d)
@@ -118,7 +115,7 @@ public class BearWorld
 	public void incrementDistance(double d)
 	{
 		distanceMoved += d;
-		RendererWorld.shiftGroundDisplacement(d);
+		RendererMain.shiftGroundDisplacement(d);
 	}
 
 	public double getDMoved()

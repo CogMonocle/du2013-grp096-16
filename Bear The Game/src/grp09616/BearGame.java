@@ -2,12 +2,14 @@ package grp09616;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 public class BearGame
 {
 	public static final String TEXTURE_PATH = "resources/textures/";
 	public static final String SOUND_PATH = "resources/sound/";
+	public static final String FONT_PATH = "resources/fonts/";
 	public static final double BEAR_SPEED = 0.25;
 	public static final int WINDOW_WIDTH = 800;
 	public static final int WINDOW_HEIGHT = 600;
@@ -44,7 +46,7 @@ public class BearGame
 	{
 		shouldClose = false;
 		initDisplay();
-		curState = GameState.ACTIVE;
+		curState = GameState.MENU;
 		world = new BearWorld(WINDOW_WIDTH, WINDOW_HEIGHT);
 		ManagerTextures.initialize();
 		ManagerSound.initialize();
@@ -65,6 +67,28 @@ public class BearGame
 
 	public void pollInputs()
 	{
+		ManagerMenu.updateMousePos(Mouse.getX(), Mouse.getY());
+		while(Mouse.next())
+		{
+			int button = Mouse.getEventButton();
+			switch(curState)
+			{
+			case SPLASH:
+				break;
+			case MENU:
+				if(button == 0)
+				{
+					ManagerMenu.click(this);
+				}
+				break;
+				case ACTIVE:
+				break;
+			case PAUSED:
+				break;
+			default:
+				break;
+			}
+		}
 		while (Keyboard.next())
 		{
 			int key = Keyboard.getEventKey();
@@ -83,13 +107,13 @@ public class BearGame
 				else if((key == Keyboard.KEY_Q) || (key == Keyboard.KEY_A)
 						|| (key == Keyboard.KEY_E) || (key == Keyboard.KEY_D))
 				{
-					world.enterRoarCharacter(key);
+					world.enterRoarCharacter(Keyboard.getEventCharacter());
 				}
 				// Right arrow to move forward
-				else if ((key == Keyboard.KEY_RIGHT) && (curState == GameState.ACTIVE))
-				{
-					world.beginWalk(BEAR_SPEED);
-				}
+//				else if ((key == Keyboard.KEY_RIGHT) && (curState == GameState.ACTIVE))
+//				{
+//					world.beginWalk(BEAR_SPEED);
+//				}
 				// P to toggle paused (only works in game)
 				else if ((key == Keyboard.KEY_P)
 						&& (curState == GameState.ACTIVE))
@@ -108,11 +132,11 @@ public class BearGame
 				}
 			} else
 			{
-				if ((key == Keyboard.KEY_RIGHT) && (curState == GameState.ACTIVE))
-				{
-					world.stopWalk();
-				}
-				else if ((key == Keyboard.KEY_W) && (curState == GameState.ACTIVE))
+//				if ((key == Keyboard.KEY_RIGHT) && (curState == GameState.ACTIVE))
+//				{
+//					world.stopWalk();
+//				}
+				if ((key == Keyboard.KEY_W) && (curState == GameState.ACTIVE))
 				{
 					world.roar();
 					world.setRoaring(false);
@@ -129,14 +153,27 @@ public class BearGame
 	{
 		world.beginWalk(BEAR_SPEED * dir);
 	}
+	
+	public void play()
+	{
+		curState = GameState.ACTIVE;
+		world.beginWalk(BEAR_SPEED);
+	}
 
 	public void update(int delta)
 	{
 		pollInputs();
-		if (curState == GameState.ACTIVE)
+		switch(curState)
 		{
+		case MENU:
+			ManagerMenu.render();
+			break;
+		case ACTIVE:
 			world.update(delta);
-			RendererWorld.renderWorld(world);
+			RendererMain.renderWorld(world);
+			break;
+		default:
+			break;
 		}
 		display.update();
 	}
@@ -148,7 +185,7 @@ public class BearGame
 			curState = GameState.PAUSED;
 		} else if (curState == GameState.PAUSED)
 		{
-			curState = GameState.ACTIVE;
+			play();
 		}
 	}
 
